@@ -20,7 +20,6 @@ That's it. Simple. Powerful.
 - **🔧 Open Source** — Build and customize your own agents
 
 ## ⚡ Quickstart
-
 ### 1️⃣ Install
 
 ```bash
