@@ -44,6 +44,13 @@ with gr.Blocks(title="Deep Research") as ui:
     run_button.click(run, inputs=query_textbox, outputs=report)
     query_textbox.submit(run, inputs=query_textbox, outputs=report)
 
-
 if __name__ == "__main__":
-    ui.launch(css=CSS, js=JS, theme=gr.themes.Base())
+    port = int(os.environ.get("PORT", 7860))
+
+    ui.launch(
+        server_name="0.0.0.0",
+        server_port=port,
+        css=CSS,
+        js=JS,
+        theme=gr.themes.Base()
+    )
