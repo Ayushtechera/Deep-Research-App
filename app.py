@@ -5,7 +5,7 @@ from styles import CSS, JS, EXAMPLES, HEADER_HTML
 import os
 load_dotenv(override=True)
 from openai import AsyncOpenAI
-from agents import set_default_openai_client,set_default_openai_api
+from agents import set_default_openai_client, set_default_openai_api
 from agents import set_tracing_export_api_key
 
 gemini_client = AsyncOpenAI(
@@ -17,8 +17,8 @@ set_default_openai_client(gemini_client, use_for_tracing=False)
 set_default_openai_api("chat_completions")
 set_tracing_export_api_key(os.getenv("OPENAI_API_KEY"))
 
-async def run(query: str):
-    async for status_update in ResearchManager().run(query):
+async def run(query: str, email: str):
+    async for status_update in ResearchManager().run(query, (email or "").strip()):
         yield status_update
 
 
@@ -36,13 +36,20 @@ with gr.Blocks(title="Deep Research") as ui:
         )
         run_button = gr.Button("Investigate", variant="primary", elem_id="dr-run", scale=1)
 
+    email_textbox = gr.Textbox(
+        placeholder="Your email (optional, to receive the report)",
+        show_label=False,
+        container=False,
+        elem_id="dr-email",
+    )
+
     gr.HTML('<div class="dr-examples-label">Try one</div>')
     gr.Examples(examples=EXAMPLES, inputs=query_textbox, elem_id="dr-examples")
 
     report = gr.Markdown(elem_id="dr-report")
 
-    run_button.click(run, inputs=query_textbox, outputs=report)
-    query_textbox.submit(run, inputs=query_textbox, outputs=report)
+    run_button.click(run, inputs=[query_textbox, email_textbox], outputs=report)
+    query_textbox.submit(run, inputs=[query_textbox, email_textbox], outputs=report)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
